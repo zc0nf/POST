@@ -8,6 +8,7 @@
 * il va vous permettre de choisir si vous souhaitez utiliser un password ou non sur vos archives
 * Il va vous permettre de choisir si vous souhaitez masque le nom ce que vous postez
 * Il va vous permettre de mettre un non de posteur aléatoire
+* Il va vous permettre de compresser le nzb
 
 ### De quoi avez vous besoin ###
 
@@ -31,13 +32,14 @@
 * sudo npm install -g
 
 ### Utilisation
->
-* -s  Chosir le fichier|dossier source (obligatoire)
-* -p  si vous désirer protéger vos archive avec un password aléatoire
-* -n  Si vous désirez utiliser un nom aléatoire pour vos archive
-* -f  Si vous désirez utiliser un nom de posteur aléatoire
+>	
+* -s	Chosir le fichier|dossier source (obligatoire)
+* -p	si vous désirer protéger vos archive avec un password aléatoire
+* -n	Si vous désirez utiliser un nom aléatoire pour vos archive
+* -f	Si vous désirez utiliser un nom de posteur aléatoire
 * -z	Si vous préférez utiliser 7Z plutot que rar (7z étant bien plus performant)
-* -v  Pour activer le mode DEBUG
+* -c	A utiliser si vous souhaiter compresser le NZB obtenu
+* -v	Pour activer le mode DEBUG
 
 #### Exemple
 
