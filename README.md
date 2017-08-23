@@ -1,4 +1,4 @@
-# README # TEST
+# README USENET#
 
 ### Ce que va faire ce script
 * Ce script va vous permettre à partir d'un fichier ou d'un dossier de poster celui ci sur usenet 
@@ -33,7 +33,7 @@
 * sudo npm install -g
 
 ### Utilisation
->	
+	
 * -s	Chosir le fichier|dossier source (obligatoire)
 * -p	si vous désirer protéger vos archive avec un password aléatoire
 * -n	Si vous désirez utiliser un nom aléatoire pour vos archive
@@ -45,5 +45,30 @@
 #### Exemple
 
 * usenet -p -n -z -f -s debian-9.1.0-amd64-netinst.iso
+* usenet -s debian-9.1.0-amd64-netinst.iso -f
 
 [![asciicast](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA.png)](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA)
+
+
+
+# README NZBVERIF#
+
+### Ce que va faire ce script
+* Cd script vous permet de vérifier la complétude d'un fichier NZB
+
+### De quoi avez vous besoin ###
+
+* sudo apt-get install python-setproctitle python-pynzb
+
+### Utilisation
+
+* -f	Chosir le fichier nzb à vérifier (obligatoire)
+
+#### Exemple
+
+* nzbverif -f nzb/debian-9.1.0-amd64-netinst.nzb
+
+[![asciicast](https://asciinema.org/a/sR8lym4mmITzlosatkztPtUZG.png)](https://asciinema.org/a/sR8lym4mmITzlosatkztPtUZG)
+
+
+

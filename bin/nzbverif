@@ -1,0 +1,42 @@
+#!/bin/bash
+
+BASEPATH=$(pwd)
+source ${BASEPATH}/conf/common.sh
+source ${BASEPATH}/conf/conf.sh
+
+usage()
+{
+
+cat << EOF
+usage: $0 options/
+
+OPTIONS:
+  -h  Voir ce message d\'aide
+  -f  Fichier
+EOF
+}
+
+while getopts "hf:" opt; do
+	case $opt in
+	"h")
+		usage
+		exit 1
+	;;
+
+	"f")
+		FICHIER="$OPTARG"	
+	;;
+
+	"?")
+		echo "Invalid option: -$OPTARG"
+		usage
+		exit 1
+	;;
+esac
+done
+
+shift $(($OPTIND-1))
+
+${BASEPATH}/tools/nzbverif.py -s ${NGHOST} -u ${NGUSER} -P ${NGPASS} -f ${FICHIER} 
+
+
