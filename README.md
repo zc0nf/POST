@@ -45,3 +45,5 @@
 #### Exemple
 
 * usenet -p -n -z -f -s debian-9.1.0-amd64-netinst.iso
+
+[![asciicast](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA.png)](hhttps://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA)
