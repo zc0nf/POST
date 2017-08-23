@@ -22,8 +22,8 @@
 * wget http://www.rarlab.com/rar/rarlinux-x64-5.5.0.tar.gz
 * tar xzvf rarlinux-x64-5.5.0.tar.gz
 * cd rarlinux-x64-5.5.0
-* make
-* make install
+* sudo make
+* sudo make install
 
 * sudo npm install -g nyuu
 * sudo git clone https://github.com/animetosho/ParPar
