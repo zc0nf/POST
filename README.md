@@ -7,8 +7,9 @@
 * Il va poster sur usenet en utilisant [Nyuu](https://github.com/animetosho/Nyuu "Nyuu")
 * il va vous permettre de choisir si vous souhaitez utiliser un password ou non sur vos archives
 * Il va vous permettre de choisir si vous souhaitez masque le nom ce que vous postez
-* Il va vous permettre de mettre un non de posteur aléatoire
+* Il va vous permettre de mettre un noM de posteur aléatoire
 * Il va vous permettre de compresser le nzb
+* Ajout des infos dans un fichier log
 
 ### De quoi avez vous besoin ###
 

@@ -241,12 +241,19 @@ function cleanup() {
 	cd ${BASEPATH}/
 }
 
+#Ajout au fichier log
+function log() {
+	local prefix="[$(date +%Y/%m/%d\ %H:%M:%S)]"
+	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "${BASEPATH}/usenetLog.log"
+}
+
 verifrep
 rarsize
 raring
 createpar
 uploadtong
 cleanup
+log
 
 
 echo -e $ROUGE"VOTRE UPLOAD DE" $BLEU${SOURCE}$ROUGE" EST TERMINÉ"
