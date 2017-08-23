@@ -20,9 +20,9 @@
 #
 ##############################################################################################
 
-source common.sh
-source conf.sh
 BASEPATH=$(pwd)
+source ${BASEPATH}/conf/common.sh
+source ${BASEPATH}/conf/conf.sh
 
 usage()
 {
@@ -42,7 +42,7 @@ OPTIONS:
 EOF
 }
 
-while getopts "vpnfzs:" opt
+while getopts "vpnfczs:" opt
 do
 	case $opt in
 	"h")
@@ -64,6 +64,10 @@ do
 	
 	"f")
 		RANDOMFROM="YES"	
+	;;
+	
+	"c")
+		COMPRESSNZB="YES"	
 	;;
 	
 	"z")
@@ -215,9 +219,18 @@ function uploadtong() {
 	randsend
 	NGFROM=${sender}
 	fi
-	nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
-	if [[ ${RANDOMPASS} == YES ]]; then
-	sed -i "4i\<head><meta type=\"password\">${RARPASS}</meta></head>\n" nzb/${NZBNAME}.nzb
+	if [[ ${COMPRESSNZB} = YES ]]; then
+		if [[ ${RANDOMPASS} == YES ]]; then
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o nzb/${NZBNAME}.nzb  -r include temp/${NZBNAME}/ 
+		else
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+		fi
+	else
+		if [[ ${RANDOMPASS} == YES ]]; then
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+		else
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+		fi	
 	fi
 }
 
