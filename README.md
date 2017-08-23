@@ -1,4 +1,4 @@
-# README #
+# README # TEST
 
 ### Ce que va faire ce script
 * Ce script va vous permettre à partir d'un fichier ou d'un dossier de poster celui ci sur usenet 
