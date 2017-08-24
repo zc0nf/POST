@@ -179,7 +179,7 @@ fi
 #Calcul de la taille des rar
 function rarsize() {
 	echo -e "$BLEUB""CALCUL DE LA TAILLE DES RAR""$NORMAL"
-	SIZE=$(du -b ${DOSSIER} | awk '{ print $1 }')
+	SIZE=$(du -b -c ${DOSSIER} | grep total | awk '{ print $1 }')
 	HUMANSIZE=$(du -h ${DOSSIER} | awk '{ print $1 }')
 	if [[ $SIZE -lt 1157286400000 ]] && [[ $SIZE -gt 15728640000 ]]
 	then 
