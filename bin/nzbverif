@@ -37,6 +37,6 @@ done
 
 shift $(($OPTIND-1))
 
-${BASEPATH}/tools/nzbverif.py -s ${NGHOST} -u ${NGUSER} -P ${NGPASS} -f ${FICHIER} -d 1
+${BASEPATH}/tools/nzbverif.py -s ${NGHOST} -u ${NGUSER} -P ${NGPASS} -f ${FICHIER}
 
 
