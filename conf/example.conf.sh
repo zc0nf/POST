@@ -6,5 +6,6 @@ NGPASS="PASSWORD"
 NGGROUP="alt.binaries.******"
 NGNBRCONNECT="10"
 NGFROM="test@test.com"
-PARPERCENT=
+PARPERCENT="20"
+NZBOUTPUT"/home/***/****"
 

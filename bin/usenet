@@ -115,7 +115,11 @@ fi
 
 #Création d'un repertoire temporaire et du répertoire ou seront stocker les nzb
 if [ ! -d temp ]; then mkdir temp; fi
-if [ ! -d nzb ]; then mkdir nzb; fi
+
+if [ -z ${NZBOUTPUT}]; then
+	if [ ! -d nzb ]; then mkdir nzb; fi
+	NZBOUTPUT="nzb"
+fi
 
 #Génération du nom aléatoire
 function randname() {
@@ -221,15 +225,15 @@ function uploadtong() {
 	fi
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o nzb/${NZBNAME}.nzb  -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb  -r include temp/${NZBNAME}/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o nzb/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
 		fi	
 	fi
 }
