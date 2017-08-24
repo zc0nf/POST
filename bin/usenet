@@ -99,7 +99,7 @@ done
 shift $(($OPTIND-1))
 
 #-------------- Tests des dépendances ------------------ 
-LISTE_APPLIS="nyuu parpar cfv 7z rar" 
+LISTE_APPLIS="nyuu parpar cfv 7z rar bc" 
 sortie="notok" 
 	for i in $LISTE_APPLIS; do 
 	which $i > /dev/null 2>&1 
