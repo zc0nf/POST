@@ -7,5 +7,5 @@ NGGROUP="alt.binaries.******"
 NGNBRCONNECT="10"
 NGFROM="test@test.com"
 PARPERCENT="20"
-NZBOUTPUT"/home/***/****"
+NZBOUTPUT="/home/***/****"
 
