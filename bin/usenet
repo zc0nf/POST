@@ -127,11 +127,18 @@ if [ -z ${SOURCE} ] ; then
 fi
 
 #Création d'un repertoire temporaire et du répertoire ou seront stocker les nzb
-if [ ! -d temp ]; then mkdir temp; fi
+if [ ! -d $SCRIPT_PATH/../temp ]
+then 
+	mkdir $SCRIPT_PATH/../temp 
+fi
+TEMP="$SCRIPT_PATH/../temp"
 
 if [ -z ${NZBOUTPUT}]; then
-	if [ ! -d nzb ]; then mkdir nzb; fi
-	NZBOUTPUT="nzb"
+	if [ ! -d $SCRIPT_PATH/../nzb ]
+	then 
+	mkdir $SCRIPT_PATH/../nzb; 
+	fi
+	NZBOUTPUT="$SCRIPT_PATH/../nzb"
 fi
 
 #Génération du nom aléatoire
@@ -165,16 +172,17 @@ if [ -d "${RELEASE}" ]; then
 else
 	DOSSIER="${RELEASE%.*}"
 	mkdir ${DOSSIER} 
-	mv ${RELEASE} ${DOSSIER}
+	cp -rl ${RELEASE} ${DOSSIER}
+	DIRECTORY="NO"
 fi
 echo -e "$VERT""CREATION DES RÉPERTOIRES""$NORMAL"
 
 if [[ ${RANDOMNAME} = "YES" ]]; then
 	RANDNAME=$(randname)
-	mkdir temp/${RANDNAME}
+	mkdir ${TEMP}/${RANDNAME}
 	NZBNAME=${RANDNAME}
 else
-	mkdir temp/${DOSSIER}
+	mkdir ${TEMP}/${DOSSIER}
 	NZBNAME=${DOSSIER}
 fi
 }
@@ -204,20 +212,20 @@ function raring() {
 	if [[ ${SEVENZ} = "YES" ]]; then
 		if [[ ${RANDOMPASS} == "YES" ]]; then
 			RARPASS=$(randpass)
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -p${RARPASS} -- temp/${NZBNAME}/${NZBNAME} ${DOSSIER}
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -p${RARPASS} -- ${TEMP}/${NZBNAME}/${NZBNAME} ${DOSSIER}
 		else
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -- temp/${NZBNAME}/${NZBNAME} ${DOSSIER}
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -- ${TEMP}/${NZBNAME}/${NZBNAME} ${DOSSIER}
 		fi
 	else
 		if [[ ${RANDOMPASS} = "YES" ]]; then
 			RARPASS=$(randpass)
-			rar a ${RARSIZE} -hp${RARPASS} -m0 -ma4 -vn temp/${NZBNAME}/${NZBNAME}.rar ${DOSSIER} 
+			rar a ${RARSIZE} -hp${RARPASS} -m0 -ma4 -vn ${TEMP}/${NZBNAME}/${NZBNAME}.rar ${DOSSIER} 
 		else
-			rar a ${RARSIZE} -m0 -ma4 -vn temp/${NZBNAME}/${NZBNAME}.rar ${DOSSIER}
+			rar a ${RARSIZE} -m0 -ma4 -vn ${TEMP}/${NZBNAME}/${NZBNAME}.rar ${DOSSIER}
 		fi
 	fi
 	
-	cd temp/${NZBNAME}
+	cd ${TEMP}/${NZBNAME}
 	echo -e "$ROSE""CRÉATION DU SFV""$NORMAL"
 	cfv -C -f ${NZBNAME}.sfv
 	cd ${BASEPATH}/
@@ -226,7 +234,7 @@ function raring() {
 #creation des PAR2
 function createpar() { 
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
-	parpar -s ${BLOCKSIZE}M -r${PARPERCENT}% -d pow2 -m 16000M -o temp/${NZBNAME}/${NZBNAME}.par2 -R temp/${NZBNAME}/
+	parpar -s ${BLOCKSIZE}M -r${PARPERCENT}% -d pow2 -m 16000M -o ${TEMP}/${NZBNAME}/${NZBNAME}.par2 -R ${TEMP}/${NZBNAME}/
 }
 
 #Upload sur les newsgroups
@@ -238,15 +246,15 @@ function uploadtong() {
 	fi
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb  -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb  -r include ${TEMP}/${NZBNAME}/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include temp/${NZBNAME}/ 
+			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
 		fi	
 	fi
 }
@@ -254,14 +262,15 @@ function uploadtong() {
 #nettoyage
 function cleanup() {
 	echo -e "$ROSEB""NETTOYAGE""$NORMAL"
-	rm -rf temp/${NZBNAME}/
+	rm -rf ${TEMP}/${NZBNAME}/
+	if [[ ${DIRECTORY} = "NO" ]]; then rm -rf ${DOSSIER} fi
 	cd ${BASEPATH}/
 }
 
 #Ajout au fichier log
 function log() {
 	local prefix="[$(date +%Y/%m/%d\ %H:%M:%S)]"
-	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "${BASEPATH}/usenetLog.log"
+	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "$SCRIPT_PATH/../usenetLog.log"
 }
 
 verifrep
