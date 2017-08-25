@@ -36,7 +36,6 @@
 * A La Racine de votre user (/home/user/)
 * git clone https://github.com/Diabolino/POST
 * cp -vaR POST/. . && rmdir POST/
-* chmod 
 
 ### Utilisation
 	
