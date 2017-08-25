@@ -7,7 +7,7 @@
 * Il va poster sur usenet en utilisant [Nyuu](https://github.com/animetosho/Nyuu "Nyuu")
 * il va vous permettre de choisir si vous souhaitez utiliser un password ou non sur vos archives
 * Il va vous permettre de choisir si vous souhaitez masque le nom ce que vous postez
-* Il va vous permettre de mettre un noM de posteur aléatoire
+* Il va vous permettre de mettre un nom de posteur aléatoire
 * Il va vous permettre de compresser le nzb
 * Ajout des infos dans un fichier log
 
@@ -31,6 +31,12 @@
 * sudo git clone https://github.com/animetosho/ParPar
 * cd ParPar
 * sudo npm install -g
+
+### Installation
+* A La Racine de votre user (/home/user/)
+* git clone https://github.com/Diabolino/POST
+* cp -vaR POST/. . && rmdir POST/
+* chmod 
 
 ### Utilisation
 	
