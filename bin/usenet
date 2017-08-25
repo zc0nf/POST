@@ -33,9 +33,10 @@
 BASEPATH=$(pwd)
 SCRIPT=${0}
 SCRIPT_NAME=${SCRIPT##*/}
-SCRIPT_PATH=$(dirname ${SCRIPT})
-source $SCRIPT_PATH/../conf/common.sh
-source $SCRIPT_PATH/../conf/conf.sh
+SCRIPT_PATH=$(dirname "${SCRIPT}")
+
+source "$SCRIPT_PATH"/../conf/common.sh
+source "$SCRIPT_PATH"/../conf/conf.sh
 
 usage()
 {
@@ -99,16 +100,16 @@ do
 esac
 done
 
-shift $(($OPTIND-1))
+shift $((OPTIND-1))
 
 #-------------- Tests des dépendances ------------------ 
-LISTE_APPLIS="nyuu parpar cfv 7z rar bc" 
+LISTE_APPLIS="nyuu parpar cfv 7z rar bc openssl" 
 sortie="notok" 
 	for i in $LISTE_APPLIS; do 
-	which $i > /dev/null 2>&1 
+	which "$i" > /dev/null 2>&1 
 		if [ "$?" = "1" ]; 
 		then [ "$sortie" = "notok" ] && echo -e "${NORMAL}""Programme(s) manquant(s) : " 
-		echo -e "${VERTB} ${i}${NORMAL}" 
+		echo -e "${VERTB}" "${i}""${NORMAL}" 
 		sortie="ok" 
 		fi; 
 	done 
@@ -119,70 +120,70 @@ sortie="notok"
 	fi 
 #-------------- fin Tests des dépendances ------------------  
 
-if [ -z ${SOURCE} ] ; then
+if [ -z "${SOURCE}" ] ; then
 	echo -e "$BLEUB"
     usage
 	echo -e "$NORMAL"
     exit 0
 fi
 
-#Création d'un repertoire temporaire et du répertoire ou seront stocker les nzb
-if [ ! -d $SCRIPT_PATH/../temp ]
+#Création d\'un repertoire temporaire et du répertoire ou seront stocker les nzb
+if [ ! -d "$SCRIPT_PATH"/../temp ]
 then 
-	mkdir $SCRIPT_PATH/../temp 
+	mkdir "$SCRIPT_PATH"/../temp 
 fi
 TEMP="$SCRIPT_PATH/../temp"
 
-if [ -z ${NZBOUTPUT}]; then
-	if [ ! -d $SCRIPT_PATH/../nzb ]
+if [ -z "${NZBOUTPUT}" ]; then
+	if [ ! -d "$SCRIPT_PATH"/../nzb ]
 	then 
-	mkdir $SCRIPT_PATH/../nzb; 
+	mkdir "$SCRIPT_PATH"/../nzb; 
 	fi
 	NZBOUTPUT="$SCRIPT_PATH/../nzb"
 fi
 
 #Génération du nom aléatoire
 function randname() {
-CODE=$(echo ${DOSSIER} | sha256sum | base64 | tail -c 17 | head -c 15)
+CODE=$(echo "${DOSSIER}" | sha256sum | base64 | tail -c 17 | head -c 15)
 CODE2=$(date +%s | sha256sum | base64 | head -c 15)
-CODE3=$(echo ${CODE}${CODE2})
-echo ${CODE3^^}
+CODE3=$"${CODE}""${CODE2}"
+echo "${CODE3^^}"
 }
 
-#Génération d'un password pour les rar
+#Génération d\'un password pour les rar
 function randpass() {
-FIRST=$(echo ${DOSSIER} | base64 | sha256sum | tr -cd [:digit:] | head -c 10)
-pass=$(echo P$FIRST)
+FIRST=$(echo "${DOSSIER}" | base64 | sha256sum | tr -cd '[:digit:]' | head -c 10)
+pass=$(P"$FIRST")
 echo "$pass"
 }
 
-#Génération d'un user aléatoire pour l'upload
+#Génération d\'un user aléatoire pour l'upload
 function randsend() {
-part1=$(openssl rand -base64 32	| tr -cd [:alpha:] | head -c 8 | tr [:upper:] [:lower:])
-part2=$(openssl rand -base64 32	| tr -cd [:alpha:] | head -c 8 | tr [:upper:] [:lower:])
-sender=$(echo ${part1}@${part2}.com) 
+part1=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
+part2=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
+sender=$"${part1}"@"${part2}".com 
 #echo "${sender}"	
 }
 
 #Verification si la source est un fichier ou un répertoire
 function verifrep() {	
-RELEASE=$(basename ${SOURCE})
+RELEASE=$(basename "${SOURCE}")
 if [ -d "${RELEASE}" ]; then
     DOSSIER="${RELEASE}"
 else
 	DOSSIER="${RELEASE%.*}"
-	mkdir ${DOSSIER} 
-	cp -rl ${RELEASE} ${DOSSIER}
+	mkdir "${DOSSIER}" 
+	cp -rl "${RELEASE}" "${DOSSIER}"
 	DIRECTORY="NO"
 fi
 echo -e "$VERT""CREATION DES RÉPERTOIRES""$NORMAL"
 
 if [[ ${RANDOMNAME} = "YES" ]]; then
 	RANDNAME=$(randname)
-	mkdir ${TEMP}/${RANDNAME}
+	mkdir "${TEMP}"/"${RANDNAME}"
 	NZBNAME=${RANDNAME}
 else
-	mkdir ${TEMP}/${DOSSIER}
+	mkdir "${TEMP}"/"${DOSSIER}"
 	NZBNAME=${DOSSIER}
 fi
 }
@@ -190,8 +191,8 @@ fi
 #Calcul de la taille des rar
 function rarsize() {
 	echo -e "$BLEUB""CALCUL DE LA TAILLE DES RAR""$NORMAL"
-	SIZE=$(du -b -c ${DOSSIER} | grep total | awk '{ print $1 }')
-	HUMANSIZE=$(du -h ${DOSSIER} | awk '{ print $1 }')
+	SIZE=$(du -b -c "${DOSSIER}" | grep total | awk '{ print $1 }')
+	HUMANSIZE=$(du -h "${DOSSIER}" | awk '{ print $1 }')
 	if [[ $SIZE -lt 1157286400000 ]] && [[ $SIZE -gt 15728640000 ]]
 	then 
 		RARSIZE="-v1500000000b"
@@ -212,29 +213,29 @@ function raring() {
 	if [[ ${SEVENZ} = "YES" ]]; then
 		if [[ ${RANDOMPASS} == "YES" ]]; then
 			RARPASS=$(randpass)
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -p${RARPASS} -- ${TEMP}/${NZBNAME}/${NZBNAME} ${DOSSIER}
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on "${RARSIZE}" -p"${RARPASS}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
 		else
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on ${RARSIZE} -- ${TEMP}/${NZBNAME}/${NZBNAME} ${DOSSIER}
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on "${RARSIZE}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
 		fi
 	else
 		if [[ ${RANDOMPASS} = "YES" ]]; then
 			RARPASS=$(randpass)
-			rar a ${RARSIZE} -hp${RARPASS} -m0 -ma4 -vn ${TEMP}/${NZBNAME}/${NZBNAME}.rar ${DOSSIER} 
+			rar a "${RARSIZE}" -hp"${RARPASS}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" 
 		else
-			rar a ${RARSIZE} -m0 -ma4 -vn ${TEMP}/${NZBNAME}/${NZBNAME}.rar ${DOSSIER}
+			rar a "${RARSIZE}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
 		fi
 	fi
 	
-	cd ${TEMP}/${NZBNAME}
+	cd "${TEMP}"/"${NZBNAME}"
 	echo -e "$ROSE""CRÉATION DU SFV""$NORMAL"
-	cfv -C -f ${NZBNAME}.sfv
-	cd ${BASEPATH}/
+	cfv -C -f "${NZBNAME}".sfv
+	cd "${BASEPATH}"/
 }
 
 #creation des PAR2
 function createpar() { 
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
-	parpar -s ${BLOCKSIZE}M -r${PARPERCENT}% -d pow2 -m 16000M -o ${TEMP}/${NZBNAME}/${NZBNAME}.par2 -R ${TEMP}/${NZBNAME}/
+	parpar -s "${BLOCKSIZE}"M -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 }
 
 #Upload sur les newsgroups
@@ -246,15 +247,15 @@ function uploadtong() {
 	fi
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb  -r include ${TEMP}/${NZBNAME}/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${NZBNAME}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S --nzb-compress gzip --nzb-compress-level 9 -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -M password=${RARPASS} -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h ${NGHOST} -n ${NGNBRCONNECT} -u ${NGUSER} -p ${NGPASS} -f ${NGFROM} -g ${NGGROUP} -S -o ${NZBOUTPUT}/${NZBNAME}.nzb -r include ${TEMP}/${NZBNAME}/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi	
 	fi
 }
@@ -262,9 +263,11 @@ function uploadtong() {
 #nettoyage
 function cleanup() {
 	echo -e "$ROSEB""NETTOYAGE""$NORMAL"
-	rm -rf ${TEMP}/${NZBNAME}/
-	if [[ ${DIRECTORY} = "NO" ]]; then rm -rf ${DOSSIER} fi
-	cd ${BASEPATH}/
+	rm -rf "${TEMP}"/"${NZBNAME}"/
+	if [[ ${DIRECTORY} = "NO" ]]
+		then rm -rf "${DOSSIER}"
+	fi
+	cd "${BASEPATH}"/
 }
 
 #Ajout au fichier log
@@ -282,15 +285,18 @@ cleanup
 log
 
 
-echo -e $ROUGE"VOTRE UPLOAD DE" $BLEU${SOURCE}$ROUGE" EST TERMINÉ"
+
+echo -e "$ROUGE""VOTRE UPLOAD DE" "$BLEU$""{SOURCE}""$ROUGE"" EST TERMINÉ"
 
 if [[ ${RANDOMNAME} = "YES" ]]; then
-	echo -e "IL A ÉTÉ UPLOADÉ SOUS LE NOM" $BLEU${RANDNAME}$ROUGE
+	echo -e "IL A ÉTÉ UPLOADÉ SOUS LE NOM" "$BLEU""${RANDNAME}""$ROUGE"
 fi
 
 if [[ ${RANDOMPASS} = "YES" ]]; then
-	echo -e "AVEC COMME PASSWORD" $BLEU${RARPASS}$NORMAL
+	echo -e "AVEC COMME PASSWORD" "$BLEU""${RARPASS}""$NORMAL"
 fi
+
+echo "${SCRIPT_NAME}" FINIS
 	
 
 
