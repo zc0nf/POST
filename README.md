@@ -25,7 +25,7 @@
 
 #### Méthode manuel
 
-* `sudo apt-get install cfv nodejs node-gyp node-async git bc openssl`
+* `sudo apt-get install cfv nodejs node-gyp node-async git bc openssl pwgen`
 
 ##### Si vous souahitez utiliser 7zip 
 
