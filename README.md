@@ -13,7 +13,7 @@
 
 ### De quoi avez vous besoin ###
 
-* sudo apt-get install cfv nodejs node-gyp node-async git bc
+* sudo apt-get install cfv nodejs node-gyp node-async git bc openssl
 
 > Si vous souahitez utiliser 7zip 
 

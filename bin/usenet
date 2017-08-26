@@ -51,6 +51,7 @@ OPTIONS:
 -n  Si vous désirez utiliser un nom aléatoire pour vos archive
 -f  Si vous désirez utiliser un sender aléatoire
 -z	Si vous préferez utiliser 7Z plutot que rar (bien plus performant)
+-c  Pour compresser le NZB obtenu
 -v  Pour activer le mode DEBUG
 
 EOF
@@ -152,8 +153,8 @@ echo "${CODE3^^}"
 
 #Génération d\'un password pour les rar
 function randpass() {
-FIRST=$(echo "${DOSSIER}" | base64 | sha256sum | tr -cd '[:digit:]' | head -c 10)
-pass=$(P"$FIRST")
+FIRST=$(echo "${DOSSIER}" | base64 | sha256sum | tr -cd '[:digit:]' | head -c 12)
+pass=$"$FIRST"
 echo "$pass"
 }
 
@@ -241,21 +242,23 @@ function createpar() {
 #Upload sur les newsgroups
 function uploadtong() {
 	echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
-	if [[ ${RANDOMFROM} = YES ]]; then
-	randsend
-	NGFROM=${sender}
+	if [[ ${RANDOMFROM} = YES ]] || [ -z "${NGFROM}" ]
+	then
+		randsend
+		NGFROM=${sender}
 	fi
+	
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${NZBNAME}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -o "${NZBOUTPUT}"/"${NZBNAME}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi	
 	fi
 }
