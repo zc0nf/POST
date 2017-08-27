@@ -1,19 +1,19 @@
 #!/bin/bash
 #mise à jour des dépots et installation des executables necessaire
-su apt-get update && apt-get install -y python-setproctitle python-pynzb wget cfv nodejs node-gyp node-async git npm p7zip-full bc openssl pwgen
+sudo apt-get update && apt-get install -y python-setproctitle python-pynzb wget cfv nodejs node-gyp node-async git npm p7zip-full bc openssl pwgen
 
 #instalation de nyuu
-su npm install -g nyuu
+sudo npm install -g nyuu
 
 #instalation de parpar
-su cd /tmp && git clone https://github.com/animetosho/ParPar
-su cd ParPar && npm install -g
+sudo cd /tmp && git clone https://github.com/animetosho/ParPar
+sudo cd ParPar && npm install -g
 
 #installation de rar
-su cd /tmp
-su wget "http://www.rarlab.com/rar/rarlinux-x64-5.5.0.tar.gz"
-su tar xzvf rarlinux-x64-5.5.0.tar.gz
-su cd rar && make && make install
+sudo cd /tmp
+sudo wget "http://www.rarlab.com/rar/rarlinux-x64-5.5.0.tar.gz"
+sudo tar xzvf rarlinux-x64-5.5.0.tar.gz
+sudo cd rar && make && make install
 
 #instalation de POST
 cd "${HOME}"
