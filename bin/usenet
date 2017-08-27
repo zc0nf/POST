@@ -285,12 +285,12 @@ rarsize
 raring
 createpar
 uploadtong
-cleanup
+#cleanup
 log
 
 
 
-echo -e "$ROUGE""VOTRE UPLOAD DE" "$BLEU$""{SOURCE}""$ROUGE"" EST TERMINÉ"
+echo -e "$ROUGE""VOTRE UPLOAD DE" "$BLEU""${SOURCE}""$ROUGE"" EST TERMINÉ"
 
 if [[ ${RANDOMNAME} = "YES" ]]; then
 	echo -e "IL A ÉTÉ UPLOADÉ SOUS LE NOM" "$BLEU""${RANDNAME}""$ROUGE"
