@@ -53,11 +53,12 @@ OPTIONS:
 -z	Si vous préferez utiliser 7Z plutot que rar (bien plus performant)
 -c  Pour compresser le NZB obtenu
 -v  Pour activer le mode DEBUG
+-F  Upload full random
 
 EOF
 }
 
-while getopts "vpnfczs:" opt
+while getopts "vpnfFczs:" opt
 do
 	case $opt in
 	"h")
@@ -87,6 +88,12 @@ do
 	
 	"z")
 		SEVENZ="YES"	
+	;;
+	
+	"F")
+		FULLRANDOM="YES"
+		RANDOMNAME="YES"
+		RANDOMPASS="YES"	
 	;;
 	
 	"v")
@@ -164,7 +171,7 @@ function randsend() {
 part1=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
 part2=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
 sender=$"${part1}"@"${part2}".com 
-#echo "${sender}"	
+echo "${sender}"	
 }
 
 #Verification si la source est un fichier ou un répertoire
@@ -264,14 +271,65 @@ function uploadtong() {
 	fi
 }
 
+#Randomisation du groupe ou poster
+function randomgroup() {
+RANDOMVAR=$$$(date +%s)
+NGGROUP=${RANDOMGROUP[$RANDOMVAR % ${#RANDOMGROUP[@]}]}	
+echo "${NGGROUP}"	
+}
+
+#upload en full random
+function uploadtongfullrandom() {
+mkdir "${TEMP}"/nzbtemp
+echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL"
+
+echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
+
+cd "${TEMP}"/"${NZBNAME}"/
+for archive in $(ls); 
+do  
+	ext=${archive##*.}
+	mv "${archive}" $(pwgen -cBsn 30).${ext}; 
+done
+
+echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
+
+for fichiercrypt in $(ls); 
+do nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f $(randsend) -g $(randomgroup) -S -M password="${RARPASS}" -o "${TEMP}"/nzbtemp/"${fichiercrypt}".nzb "${fichiercrypt}"; 
+done
+
+echo -e "$CYAN""CREATION DU NZB""$NORMAL"
+
+echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<!DOCTYPE nzb PUBLIC \"-//newzBin//DTD NZB 1.1//EN\" \"http://www.newzbin.com/DTD/nzb/nzb-1.1.dtd\">
+<nzb xmlns=\"http://www.newzbin.com/DTD/2003/nzb\">
+	<head>
+		<meta type=\"password\">${RARPASS}</meta>
+	</head>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
+	
+cd "${TEMP}"/nzbtemp/
+
+for nzb in *.nzb;
+do 
+	echo $(php "$SCRIPT_PATH"/../tools/nzb.php $nzb) >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
+done
+
+echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 
+
+}
+
+
+
 #nettoyage
 function cleanup() {
 	echo -e "$ROSEB""NETTOYAGE""$NORMAL"
+	cd "${BASEPATH}"
 	rm -rf "${TEMP}"/"${NZBNAME}"/
 	if [[ ${DIRECTORY} = "NO" ]]
 		then rm -rf "${DOSSIER}"
 	fi
 	cd "${BASEPATH}"/
+	rm -rf "${TEMP}"/nzbtemp
 }
 
 #Ajout au fichier log
@@ -284,8 +342,12 @@ verifrep
 rarsize
 raring
 createpar
-uploadtong
-cleanup
+if [[ ${FULLRANDOM} == YES ]]; then
+	uploadtongfullrandom
+else
+	uploadtong
+fi
+   cleanup
 log
 
 
