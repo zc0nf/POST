@@ -148,7 +148,7 @@ function randname() {
 #CODE=$(echo "${DOSSIER}" | sha256sum | base64 | tail -c 17 | head -c 15)
 #CODE2=$(date +%s | sha256sum | base64 | head -c 15)
 #CODE3=$"${CODE}""${CODE2}"
-CODE3=$(echo "${DOSSIER}" | date +%s | sha256sum | base64 | tail -c 17 | head -c 30)
+CODE3=$(echo "${DOSSIER}" | date +%s | sha256sum | base64 | head -c 30)
 echo "${CODE3^^}"
 }
 

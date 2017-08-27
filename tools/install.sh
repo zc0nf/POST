@@ -1,6 +1,6 @@
 #!/bin/bash
 #mise à jour des dépots et installation des executables necessaire
-apt-get update && apt-get install -y python-setproctitle python-pynzb wget cfv nodejs node-gyp node-async git npm p7zip-full bc openssl pwgen
+apt-get update && apt-get install -y python-setproctitle python3-pynzb wget cfv nodejs node-gyp node-async git p7zip-full bc openssl pwgen
 
 #instalation de nyuu
 npm install -g nyuu
