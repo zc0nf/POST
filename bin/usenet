@@ -273,29 +273,33 @@ function uploadtong() {
 
 #Randomisation du groupe ou poster
 function randomgroup() {
-RANDOMVAR=$$$(date +%s)
-NGGROUP=${RANDOMGROUP[$RANDOMVAR % ${#RANDOMGROUP[@]}]}	
-echo "${NGGROUP}"	
+
+N=1	
+for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
+do
+    echo "${RANDOMGROUP[$index]}"
+done	
 }
 
 #upload en full random
 function uploadtongfullrandom() {
-mkdir "${TEMP}"/nzbtemp
+mkdir "${TEMP}""${NZBTEMP}"
 echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL"
 
 echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
 
 cd "${TEMP}"/"${NZBNAME}"/
-for archive in $(ls); 
+for archive in *; 
 do  
 	ext=${archive##*.}
-	mv "${archive}" $(pwgen -cBsn 30).${ext}; 
+	ext=."${ext}"
+	mv "${archive}" "$(pwgen -cBsn 30)""${ext}"; 
 done
 
 echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
-for fichiercrypt in $(ls); 
-do nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f $(randsend) -g $(randomgroup) -S -M password="${RARPASS}" -o "${TEMP}"/nzbtemp/"${fichiercrypt}".nzb "${fichiercrypt}"; 
+for fichiercrypt in *; 
+do nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
@@ -311,7 +315,7 @@ cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
 do 
-	echo $(php "$SCRIPT_PATH"/../tools/nzb.php $nzb) >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
 done
 
 echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 
