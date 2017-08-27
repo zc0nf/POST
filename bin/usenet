@@ -227,9 +227,16 @@ function raring() {
 			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on "${RARSIZE}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
 		fi
 	else
+		formatter="$SCRIPT_PATH"/../tools/rar.pl
 		if [[ ${RANDOMPASS} = "YES" ]]; then
 			RARPASS=$(randpass)
-			rar a "${RARSIZE}" -hp"${RARPASS}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" 
+			{
+				flock 204
+				rar a "${RARSIZE}" -hp"${RARPASS}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
+				|& perl $formatter RAR $SOURCE
+				rar_return=${PIPESTATUS[1]}
+				echo "" # Add a \n
+			} 204>"$SCRIPT_PATH"/../tools/rar.lock;
 		else
 			rar a "${RARSIZE}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
 		fi
@@ -304,7 +311,8 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
 do 
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+	echo test
+	#nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
