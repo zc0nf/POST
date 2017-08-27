@@ -289,17 +289,22 @@ echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL"
 echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
 
 cd "${TEMP}"/"${NZBNAME}"/
+declare -A archivename
 for archive in *; 
 do  
-	ext=${archive##*.}
-	ext=."${ext}"
-	mv "${archive}" "$(pwgen -cBsn 30)""${ext}"; 
+	#ext=${archive##*.}
+	#ext=."${ext}"
+	archivecrypt=$(pwgen -cBsn 30)
+	mv "${archive}" "${archivecrypt}"
+	archivename[$archivecrypt]="${archive}"
+	
 done
 
 echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
-do nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+do 
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
@@ -315,7 +320,8 @@ cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
 do 
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
+	uncrypted=$("${archivename["${nzb%.*}"]}")
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${uncrypted}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
 done
 
 echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 
@@ -334,6 +340,7 @@ function cleanup() {
 	fi
 	cd "${BASEPATH}"/
 	rm -rf "${TEMP}"/nzbtemp
+	unset archivename
 }
 
 #Ajout au fichier log
