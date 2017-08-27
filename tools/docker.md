@@ -49,7 +49,9 @@ Dans le répertoire image, créer un fichier DockerFile (il y aura à l'interieu
       git \
       npm \
       p7zip-full \
-      bc
+      bc \
+      perl \
+      pwgen
     
     # Nettoyage de l'image
     RUN \
@@ -59,6 +61,10 @@ Dans le répertoire image, créer un fichier DockerFile (il y aura à l'interieu
     
     # Install Nyuu
     RUN npm install -g nyuu
+    
+    # Install perl module
+    RUN Term::ANSIColor
+    RUN cpan Term::ReadKey;
     
     # Install ParPar
     RUN cd /tmp && git clone https://github.com/animetosho/ParPar

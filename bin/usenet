@@ -111,7 +111,7 @@ done
 shift $((OPTIND-1))
 
 #-------------- Tests des dépendances ------------------ 
-LISTE_APPLIS="nyuu parpar cfv 7z rar bc openssl pwgen" 
+LISTE_APPLIS="nyuu parpar cfv 7z rar bc openssl pwgen perl" 
 sortie="notok" 
 	for i in $LISTE_APPLIS; do 
 	which "$i" > /dev/null 2>&1 
@@ -152,16 +152,12 @@ fi
 
 #Génération du nom aléatoire
 function randname() {
-#CODE=$(echo "${DOSSIER}" | sha256sum | base64 | tail -c 17 | head -c 15)
-#CODE2=$(date +%s | sha256sum | base64 | head -c 15)
-#CODE3=$"${CODE}""${CODE2}"
 CODE3=$(echo "${DOSSIER}" | date +%s | sha256sum | base64 | head -c 30)
 echo "${CODE3^^}"
 }
 
 #Génération d\'un password pour les rar
 function randpass() {
-#FIRST=$(echo "${DOSSIER}" | base64 | sha256sum | tr -cd '[:digit:]' | head -c 12)
 pass=$(pwgen -cBsn 13 1)
 echo "$pass"
 }
@@ -299,12 +295,9 @@ cd "${TEMP}"/"${NZBNAME}"/
 declare -A archivename
 for archive in *; 
 do  
-	#ext=${archive##*.}
-	#ext=."${ext}"
 	archivecrypt=$(pwgen -cBsn 30)
 	mv "${archive}" "${archivecrypt}"
 	archivename[$archivecrypt]="${archive}"
-	
 done
 
 echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
@@ -312,7 +305,7 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 for fichiercrypt in *; 
 do 
 	echo test
-	#nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
@@ -328,8 +321,7 @@ cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
 do 
-	uncrypted=$("${archivename["${nzb%.*}"]}")
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${uncrypted}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
 done
 
 echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 
