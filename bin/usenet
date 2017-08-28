@@ -304,7 +304,6 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
 do 
-	echo test
 	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 

@@ -63,7 +63,7 @@ Dans le répertoire image, créer un fichier DockerFile (il y aura à l'interieu
     RUN npm install -g nyuu
     
     # Install perl module
-    RUN Term::ANSIColor
+    RUN cpan Term::ANSIColor
     RUN cpan Term::ReadKey;
     
     # Install ParPar
