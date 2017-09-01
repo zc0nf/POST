@@ -196,19 +196,45 @@ fi
 #Calcul de la taille des rar
 function rarsize() {
 	echo -e "$BLEUB""CALCUL DE LA TAILLE DES RAR""$NORMAL"
-	SIZE=$(du -b -c "${DOSSIER}" | grep total | awk '{ print $1 }')
+	SIZE=$(du -BM -c "${DOSSIER}" | grep total | awk '{ print $1 }')
 	HUMANSIZE=$(du -h "${DOSSIER}" | awk '{ print $1 }')
-	if [[ $SIZE -lt 1157286400000 ]] && [[ $SIZE -gt 15728640000 ]]
+if [[ $SIZE -gt 16384 ]]
 	then 
-		RARSIZE="-v1500000000b"
-	elif [[ $SIZE -lt 15728640000 ]] && [[ $SIZE -gt 1572864000 ]]
+		TEMPRARSIZE="524288000"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/716800" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*716800" | bc)
+		PAR2BLOCKSIZE="716800"
+		ARTCLESIZE="700"
+	elif [[ $SIZE -lt 16384 ]] && [[ $SIZE -gt 8192 ]]
+	then	
+		TEMPRARSIZE="262144000"	
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/640000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*640000" | bc)
+		PAR2BLOCKSIZE="640000"
+		ARTCLESIZE="625"
+	elif [[ $SIZE -lt 8192 ]] && [[ $SIZE -gt 4096 ]]
+	then	
+		TEMPRARSIZE="104857600"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/512000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*512000" | bc)
+		PAR2BLOCKSIZE="512000"
+		ARTCLESIZE="500"
+	elif [[ $SIZE -lt 4096 ]] && [[ $SIZE -gt 1024 ]]
 	then 
-		RARSIZE="-v150000000b"
-	elif [[ $SIZE -lt 1572864000 ]]; 
+		TEMPRARSIZE="52428800"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/384000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*384000" | bc)
+		PAR2BLOCKSIZE="384000"
+		ARTCLESIZE="375"
+	elif [[ $SIZE -lt 1024 ]]; 
 	then 
-		RARSIZE="-v15000000b"			
-fi
-	BLOCKSIZE=$(echo "scale=2; (($SIZE/1024)/1024)/100" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		TEMPRARSIZE="15728640"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/128000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*128000" | bc)
+		PAR2BLOCKSIZE="128000"
+		ARTCLESIZE="125"
+		
+	fi
 }
 
 #creation des archive et sfv
@@ -218,9 +244,9 @@ function raring() {
 	if [[ ${SEVENZ} = "YES" ]]; then
 		if [[ ${RANDOMPASS} == "YES" ]]; then
 			RARPASS=$(randpass)
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on "${RARSIZE}" -p"${RARPASS}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on -v"${RARSIZE}"b -p"${RARPASS}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
 		else
-			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on "${RARSIZE}" -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
+			7z a -t7z -m0=copy -ms=8m -mmt=8 -mx=1 -mhe=on -v"${RARSIZE}"b -- "${TEMP}"/"${NZBNAME}"/"${NZBNAME}" "${DOSSIER}"
 		fi
 	else
 		formatter="$SCRIPT_PATH"/../tools/rar.pl
@@ -228,13 +254,13 @@ function raring() {
 			RARPASS=$(randpass)
 			{
 				flock 204
-				rar a "${RARSIZE}" -hp"${RARPASS}" -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
+				rar a -v"${RARSIZE}"b -hp"${RARPASS}" -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
 				|& perl $formatter RAR $SOURCE
 				rar_return=${PIPESTATUS[1]}
 				echo "" # Add a \n
 			} 204>"$SCRIPT_PATH"/../tools/rar.lock;
 		else
-			rar a "${RARSIZE}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
+			rar a -v"${RARSIZE}"b -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
 		fi
 	fi
 	
@@ -248,7 +274,7 @@ function raring() {
 function createpar() { 
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
 	
-	if [ "${PAR2BIN}" = "paré"]
+	if [ "${PAR2BIN}" = "par2"]
 	then
 		par2create -s"${BLOCKSIZE}"m -r"${PARPERCENT}" -m 16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	else
@@ -267,15 +293,15 @@ function uploadtong() {
 	
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi	
 	fi
 }
@@ -310,7 +336,7 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
 do 
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"

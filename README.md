@@ -3,7 +3,7 @@
 ## Ce que va faire ce script
 * Ce script va vous permettre à partir d'un fichier ou d'un dossier de poster celui ci sur usenet 
 * Il va créer les archives en ayant le choix entre rar et 7z
-* il va créer les par2 en utilisant [ParPar](https://github.com/animetosho/ParPar "ParPar")
+* il va créer les par2 en utilisant [ParPar](https://github.com/animetosho/ParPar "ParPar") ou au choix [par2cmldine](https://github.com/Parchive/par2cmdline "par2cmdline")
 * Il va poster sur usenet en utilisant [Nyuu](https://github.com/animetosho/Nyuu "Nyuu")
 * il va vous permettre de choisir si vous souhaitez utiliser un password ou non sur vos archives
 * Il va vous permettre de choisir si vous souhaitez masque le nom ce que vous postez
@@ -43,6 +43,16 @@
 * `sudo git clone https://github.com/animetosho/ParPar`
 * `cd ParPar`
 * `sudo npm install -g`
+
+##### Si vous choisisez d'utiliser par2cmline
+
+* `git clone https://github.com/Parchive/par2cmdline`
+* `cd par2cmdline`
+* `./automake.sh`
+* `./configure`
+* `make`
+* `make check`
+* `make install`
 
 ##### A La Racine de votre user (/home/user/)
 * `git clone https://github.com/Diabolino/POST`
