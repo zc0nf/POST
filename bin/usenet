@@ -208,10 +208,10 @@ if [[ $SIZE -gt 16384 ]]
 	elif [[ $SIZE -lt 16384 ]] && [[ $SIZE -gt 8192 ]]
 	then	
 		TEMPRARSIZE="262144000"	
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/640000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*640000" | bc)
-		PAR2BLOCKSIZE="640000"
-		ARTCLESIZE="625"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/655360" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*655360" | bc)
+		PAR2BLOCKSIZE="655360"
+		ARTCLESIZE="640"
 	elif [[ $SIZE -lt 8192 ]] && [[ $SIZE -gt 4096 ]]
 	then	
 		TEMPRARSIZE="104857600"
@@ -222,17 +222,24 @@ if [[ $SIZE -gt 16384 ]]
 	elif [[ $SIZE -lt 4096 ]] && [[ $SIZE -gt 1024 ]]
 	then 
 		TEMPRARSIZE="52428800"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/384000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*384000" | bc)
-		PAR2BLOCKSIZE="384000"
-		ARTCLESIZE="375"
-	elif [[ $SIZE -lt 1024 ]]; 
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/409600" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*409600" | bc)
+		PAR2BLOCKSIZE="409600"
+		ARTCLESIZE="400"
+	elif [[ $SIZE -lt 1024 ]] && [[ $SIZE -gt 512 ]]
+	then 
+		TEMPRARSIZE="26214400"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/245760" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*245760" | bc)
+		PAR2BLOCKSIZE="245760"
+		ARTCLESIZE="240"
+	elif [[ $SIZE -lt 512 ]]; 
 	then 
 		TEMPRARSIZE="15728640"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/128000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*128000" | bc)
-		PAR2BLOCKSIZE="128000"
-		ARTCLESIZE="125"
+		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/131072" | bc | awk '{printf("%d\n",$1 + 0.5)}')
+		RARSIZE=$(echo "scale=0; $SEGNBR*131072" | bc)
+		PAR2BLOCKSIZE="131072"
+		ARTCLESIZE="128"
 		
 	fi
 }
@@ -274,11 +281,11 @@ function raring() {
 function createpar() { 
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
 	
-	if [ "${PAR2BIN}" = "par2"]
+	if [[ "${PAR2BIN}" == "par2" ]]
 	then
-		par2create -s"${BLOCKSIZE}"m -r"${PARPERCENT}" -m 16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+		par2create -s"${PAR2BLOCKSIZE}" -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	else
-		parpar -s "${BLOCKSIZE}"M -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+		parpar -s "${PAR2BLOCKSIZE}" -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	fi
 }
 
@@ -293,15 +300,15 @@ function uploadtong() {
 	
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi	
 	fi
 }
@@ -336,7 +343,7 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
 do 
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
