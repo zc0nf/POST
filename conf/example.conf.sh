@@ -10,6 +10,6 @@ PARPERCENT="20" #Ne pas mettre le %
 NZBOUTPUT="/home/***/****"
 NZBTEMP="/nzbtemp/"
 PAR2BIN="parpar" #parpar ou bien par2
-PAR2MEMORY"16000" #valuer en MB
+PAR2MEMORY="16000" #valuer en MB
 RANDOMGROUP=("alt.binaries.gougouland" "alt.binaries.usenet2day" "alt.binaries.usc" "alt.binaries.amazing" "alt.binaries.welovelori" "alt.binaries.insiderz" "alt.binaries.xylo" "alt.binaries.paxer" "alt.binaries.kleverig" "alt.binaries.ijsklontje") #a ne remplir que si vous utilisez la fonction fullrandom
 
