@@ -111,7 +111,7 @@ done
 shift $((OPTIND-1))
 
 #-------------- Tests des dépendances ------------------ 
-LISTE_APPLIS="nyuu parpar cfv 7z rar bc openssl pwgen perl" 
+LISTE_APPLIS="nyuu "${PAR2BIN}" cfv 7z rar bc openssl pwgen perl" 
 sortie="notok" 
 	for i in $LISTE_APPLIS; do 
 	which "$i" > /dev/null 2>&1 
@@ -247,7 +247,13 @@ function raring() {
 #creation des PAR2
 function createpar() { 
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
-	parpar -s "${BLOCKSIZE}"M -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+	
+	if [ "${PAR2BIN}" = "paré"]
+	then
+		par2create -s"${BLOCKSIZE}"m -r"${PARPERCENT}" -m 16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+	else
+		parpar -s "${BLOCKSIZE}"M -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+	fi
 }
 
 #Upload sur les newsgroups
