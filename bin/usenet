@@ -228,7 +228,7 @@ function raring() {
 			RARPASS=$(randpass)
 			{
 				flock 204
-				rar a "${RARSIZE}" -hp"${RARPASS}" -m0 -ma4 -vn "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
+				rar a "${RARSIZE}" -hp"${RARPASS}" -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
 				|& perl $formatter RAR $SOURCE
 				rar_return=${PIPESTATUS[1]}
 				echo "" # Add a \n
