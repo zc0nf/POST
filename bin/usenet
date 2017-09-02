@@ -204,14 +204,19 @@ if [[ $SIZE -gt 16384 ]]
 		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/716800" | bc | awk '{printf("%d\n",$1 + 0.5)}')
 		RARSIZE=$(echo "scale=0; $SEGNBR*716800" | bc)
 		if [[ $SIZE -gt 179200 ]] && [[ $SIZE -lt 358400 ]]
+		then
 			PAR2BLOCKSIZE="11468800"
 		elif [[ $SIZE -gt 89600 ]] && [[ $SIZE -lt 179200 ]]
+		then
 			PAR2BLOCKSIZE="5734400"
 		elif [[ $SIZE -gt 44800 ]] && [[ $SIZE -lt 89600 ]]
+		then
 			PAR2BLOCKSIZE="2867200"
 		elif [[ $SIZE -gt 22400 ]] && [[ $SIZE -lt 44800 ]]
+		then
 			PAR2BLOCKSIZE="1433600"
 		elif [[ $SIZE -lt 22400 ]]
+		then
 			PAR2BLOCKSIZE="716800"
 		fi
 		ARTCLESIZE="700"
