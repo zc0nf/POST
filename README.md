@@ -19,13 +19,11 @@
 
 #### Méthode automatique
 
-    wget https://raw.githubusercontent.com/Diabolino/POST/master/tools/install.sh
-    chmod 755 install.sh
-    ./install.sh
+    
 
 #### Méthode manuel
 
-* `sudo apt-get install cfv nodejs node-gyp node-async git bc openssl pwgen`
+* `sudo apt-get install cfv nodejs node-gyp node-async git bc openssl pwgen perl`
 
 ##### Si vous souahitez utiliser 7zip 
 
