@@ -23,7 +23,9 @@
 
 #### Méthode manuel
 
-* `sudo apt-get install cfv nodejs node-gyp node-async git bc openssl pwgen perl`
+* `sudo apt-get install cfv git bc openssl pwgen perl`
+* `curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -`
+* `sudo apt-get install -y nodejs`
 
 ##### Si vous souahitez utiliser 7zip 
 
