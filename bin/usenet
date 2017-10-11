@@ -198,6 +198,19 @@ else
 fi
 }
 
+#Vérification si nyuu tourne déjà
+function checknyuu()
+{
+ if ! ( ps -u ${NYUUUSER} | grep Nyuu > /dev/null )
+ then 
+	echo "UPLOAD POSSIBLE"	
+ else
+	echo "UPLOAD EN COURS REESAI DANS 46 secondes"
+	sleep 46
+	checknyuu
+ fi
+ }
+
 # Calcul du ARTCLESIZE(maxi 768000) en fonction de la taille du fichier/dossier SIZE et du nombre de segments maxi MAXSEGNBR (fichier conf)
 function rarsize() {
 	echo -e "$BLEUB""CALCUL DE LA TAILLE DES RAR""$NORMAL"
@@ -331,6 +344,8 @@ function uploadtong() {
 		#randomgroup
 		NGGROUP=$(randomgroup)
 	fi
+	
+	checknyuu
 	
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
