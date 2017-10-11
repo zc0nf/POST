@@ -432,8 +432,9 @@ function cleanup() {
 
 #Ajout au fichier log
 function log() {
-	local prefix="[$(date +%Y/%m/%d\ %H:%M:%S)]"
-	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "$SCRIPT_PATH/../usenetLog.log"
+	local prefix="$(date +%Y/%m/%d\-%H:%M:%S)"
+	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "$SCRIPT_PATH/../usenetLogancien.log"
+	sed -i "1i\\${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" "$SCRIPT_PATH/../usenetLog.log"			
 }
 
 verifrep
