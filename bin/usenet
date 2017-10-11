@@ -458,8 +458,13 @@ if [[ ${RANDOMNAME} = "YES" ]]; then
 fi
 
 if [[ ${RANDOMPASS} = "YES" ]]; then
-	echo -e "AVEC COMME PASSWORD" "$BLEU""${RARPASS}""$NORMAL"
+	echo -e "AVEC COMME PASSWORD" "$BLEU""${RARPASS}""$ROUGE"
 fi
+
+if [[ ${RANDOMGROUP} = "YES" ]]; then
+	echo -e "SUR LE GROUPE" "$BLEU""${NGGROUP}""$NORMAL"
+fi
+
 
 echo "${SCRIPT_NAME}" FINIS
 	
