@@ -50,6 +50,7 @@ OPTIONS:
 -p  si vous désirer protéger vos archive avec un password aléatoire
 -n  Si vous désirez utiliser un nom aléatoire pour vos archive
 -f  Si vous désirez utiliser un sender aléatoire
+-g	Si vous désirez utiliser un groupe aléatoire
 -z	Si vous préferez utiliser 7Z plutot que rar (bien plus performant)
 -c  Pour compresser le NZB obtenu
 -v  Pour activer le mode DEBUG
@@ -58,7 +59,7 @@ OPTIONS:
 EOF
 }
 
-while getopts "vpnfFczs:" opt
+while getopts "vpnfFgczs:" opt
 do
 	case $opt in
 	"h")
@@ -80,6 +81,10 @@ do
 	
 	"f")
 		RANDOMFROM="YES"	
+	;;
+	
+	"g")
+		RANDOMGROUP="YES"	
 	;;
 	
 	"c")
@@ -304,6 +309,16 @@ function createpar() {
 	fi
 }
 
+#Randomisation du groupe ou poster
+function randomgroup() {
+
+N=1	
+for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
+do
+    echo "${RANDOMGROUP[$index]}"
+done	
+}
+
 #Upload sur les newsgroups
 function uploadtong() {
 	echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
@@ -311,6 +326,12 @@ function uploadtong() {
 	then
 		randsend
 		NGFROM=${sender}
+	fi
+	
+	if [[ ${RANDOMGROUP} = YES ]]
+	then
+		#randomgroup
+		NGGROUP=$(randomgroup)
 	fi
 	
 	if [[ ${COMPRESSNZB} = YES ]]; then
