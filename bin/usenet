@@ -198,70 +198,68 @@ else
 fi
 }
 
-#Calcul de la taille des rar
+# Calcul du ARTCLESIZE(maxi 768000) en fonction de la taille du fichier/dossier SIZE et du nombre de segments maxi MAXSEGNBR (fichier conf)
 function rarsize() {
 	echo -e "$BLEUB""CALCUL DE LA TAILLE DES RAR""$NORMAL"
-	SIZE=$(du -BM -c "${DOSSIER}" | grep total | awk -F "M" '{ print $1 }')
+	SIZE=$(du -b -c "${DOSSIER}" | grep total | awk '{ print $1 }')
+ 	SIZEM=$(du -BM -c "${DOSSIER}" | grep total | awk -F "M" '{ print $1 }')
 	HUMANSIZE=$(du -h "${DOSSIER}" | awk '{ print $1 }')
-if [[ $SIZE -gt 16384 ]]
-	then 
-		TEMPRARSIZE="524288000"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/716800" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*716800" | bc)
-		if [[ $SIZE -gt 179200 ]] && [[ $SIZE -lt 358400 ]]
-		then
-			PAR2BLOCKSIZE="11468800"
-		elif [[ $SIZE -gt 89600 ]] && [[ $SIZE -lt 179200 ]]
-		then
-			PAR2BLOCKSIZE="5734400"
-		elif [[ $SIZE -gt 44800 ]] && [[ $SIZE -lt 89600 ]]
-		then
-			PAR2BLOCKSIZE="2867200"
-		elif [[ $SIZE -gt 22400 ]] && [[ $SIZE -lt 44800 ]]
-		then
-			PAR2BLOCKSIZE="1433600"
-		elif [[ $SIZE -lt 22400 ]]
-		then
-			PAR2BLOCKSIZE="716800"
-		fi
-		ARTCLESIZE="700"
-	elif [[ $SIZE -lt 16384 ]] && [[ $SIZE -gt 8192 ]]
+	
+	if [[ $SIZEM -gt 16384 ]]
+ 	then 
+	MAXRARNUMBER="99"
+	elif [[ $SIZEM -lt 16384 ]] && [[ $SIZEM -gt 8192 ]]
 	then	
-		TEMPRARSIZE="262144000"	
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/655360" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*655360" | bc)
-		PAR2BLOCKSIZE="655360"
-		ARTCLESIZE="640"
-	elif [[ $SIZE -lt 8192 ]] && [[ $SIZE -gt 4096 ]]
+	MAXRARNUMBER="99"
+	elif [[ $SIZEM -lt 8192 ]] && [[ $SIZEM -gt 4096 ]]
 	then	
-		TEMPRARSIZE="104857600"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/512000" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*512000" | bc)
-		PAR2BLOCKSIZE="512000"
-		ARTCLESIZE="500"
-	elif [[ $SIZE -lt 4096 ]] && [[ $SIZE -gt 1024 ]]
+	MAXRARNUMBER="90"
+	elif [[ $SIZEM -lt 4096 ]] && [[ $SIZEM -gt 1024 ]]
 	then 
-		TEMPRARSIZE="52428800"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/409600" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*409600" | bc)
-		PAR2BLOCKSIZE="409600"
-		ARTCLESIZE="400"
-	elif [[ $SIZE -lt 1024 ]] && [[ $SIZE -gt 512 ]]
+	MAXRARNUMBER="39"
+	elif [[ $SIZEM -lt 1024 ]] && [[ $SIZEM -gt 512 ]]
 	then 
-		TEMPRARSIZE="26214400"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/245760" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*245760" | bc)
-		PAR2BLOCKSIZE="245760"
-		ARTCLESIZE="240"
-	elif [[ $SIZE -lt 512 ]]; 
+	MAXRARNUMBER="39"
+	elif [[ $SIZEM -lt 512 ]]; 
 	then 
-		TEMPRARSIZE="15728640"
-		SEGNBR=$(echo "scale=2; $TEMPRARSIZE/131072" | bc | awk '{printf("%d\n",$1 + 0.5)}')
-		RARSIZE=$(echo "scale=0; $SEGNBR*131072" | bc)
-		PAR2BLOCKSIZE="131072"
-		ARTCLESIZE="128"
-		
+	MAXRARNUMBER="19"	
 	fi
+
+	ARTCLESIZE="64000"
+		SEGNBR=$((${SIZE} / ${ARTCLESIZE}))
+		until [ ${SEGNBR} -lt ${MAXSEGNBR} ] || [ ${ARTCLESIZE} -eq 768000 ]
+		do
+			ARTCLESIZE=$((${ARTCLESIZE} + 64000))
+			SEGNBR=$((${SIZE} / ${ARTCLESIZE}))
+		done
+
+# Calcul de la taille de rar temporaire TEMPRARSIZE en fonction de la taille du fichier/dossier SIZE et du nombre de rar maxi MAXRARNUMBER (fichier conf)
+
+	TEMPRARSIZE="1048576"
+		RARNUMBER=$(echo $((${SIZE} / ${TEMPRARSIZE} - 1)))
+		until [ ${RARNUMBER} -lt ${MAXRARNUMBER} ]
+		do
+			TEMPRARSIZE=$((${TEMPRARSIZE} + 1048576))
+			RARNUMBER=$(echo $((${SIZE} / ${TEMPRARSIZE} - 1)))
+		done
+
+# Calcul de la taille de rar exacte RARSIZE en fonction du ARTCLESIZE
+
+	BLOCKPERRARFILE=$(echo $((${TEMPRARSIZE} / ${ARTCLESIZE} + 1 |bc)))
+	RARSIZE=$((${BLOCKPERRARFILE} * ${ARTCLESIZE}))
+	
+# Calcul du PAR2BLOCKSIZE en fonction du ARTCLESIZE et de la taille du fichier/dossier SIZE
+
+	TEMPPAR2BLOCKSIZE=${ARTCLESIZE}
+	MULTIPLICATEUR="1"
+		PAR2BLOCKSIZE=${ARTCLESIZE}
+		SEGNBR=$((${SIZE} / ${PAR2BLOCKSIZE}))
+		until [ ${SEGNBR} -lt ${MAXSEGNBR} ]
+		do
+			MULTIPLICATEUR=$((${MULTIPLICATEUR} + 1))
+			PAR2BLOCKSIZE=$((${TEMPPAR2BLOCKSIZE} * ${MULTIPLICATEUR}))
+			SEGNBR=$((${SIZE} / ${PAR2BLOCKSIZE}))
+		done
 }
 
 #creation des archive et sfv
@@ -336,15 +334,15 @@ function uploadtong() {
 	
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}"k -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
 		fi	
 	fi
 }
@@ -379,7 +377,7 @@ echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
 for fichiercrypt in *; 
 do 
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}"k -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
