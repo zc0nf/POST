@@ -157,8 +157,10 @@ fi
 
 #Génération du nom aléatoire
 function randname() {
-CODE3=$(echo "${DOSSIER}" | date +%s | sha256sum | base64 | head -c 30)
-echo "${CODE3^^}"
+#CODE3=$(echo "${DOSSIER}" | date +%s | sha256sum | base64 | head -c 30)
+CODE3=$(pwgen -csn 30 1)
+#echo "${CODE3^^}"
+echo "${CODE3}"
 }
 
 #Génération d\'un password pour les rar

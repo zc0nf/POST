@@ -8,6 +8,7 @@
 * il va vous permettre de choisir si vous souhaitez utiliser un password ou non sur vos archives
 * Il va vous permettre de choisir si vous souhaitez masque le nom ce que vous postez
 * Il va vous permettre de mettre un nom de posteur aléatoire
+* Il va vous permettre de poster un group aléatoire parmi une liste prédéfinis (la liste des groupes ou choisir doit être configurer dans le fichier de conf)
 * Il va vous permettre de compresser le nzb
 * Ajout des infos dans un fichier log
 
