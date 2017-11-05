@@ -1,24 +1,24 @@
 #!/bin/bash
 #############################################################################################
-#		
+#
 # Version Du Script : v1.31
-# Nom du Script : usenet								
-#					
+# Nom du Script : usenet
+#
 # -------------------------------------- HISTORIQUE ---------------------------------------
-# 
+#
 # > 24/08/17 V1.31
 # * Ajout dans paramètre dans le fichier de conf afin de choisir le repertoire ou envoyer les NZB (Demande de Hm)
-# 
+#
 # > 23/08/17 V1.3
 # * Ajout du paramètre -c permettant la compression du NZB obtenu (Demande de Hm)
 # * Changement de la méthode permettant d'ajouter le password au sein du NZB (Demande de Hm)
-# 
+#
 # > 23/08/17 V1.2
 # * Ajout de la possibilité de choisir entre rar et 7z
-# 
+#
 # > 23/08/17 V1.1
 # * Ajout d'un fichier log (Demande de Hm)
-# 
+#
 # > 22/08/17 V1.0
 # * Version initial du script
 #-------------------------------------- INSTRUCTIONS --------------------------------------
@@ -68,43 +68,43 @@ do
 	;;
 
 	"s")
-		SOURCE="$OPTARG"	
+		SOURCE="$OPTARG"
 	;;
-	
+
 	"p")
-		RANDOMPASS="YES"	
+		RANDOMPASS="YES"
 	;;
-	
+
 	"n")
-		RANDOMNAME="YES"	
+		RANDOMNAME="YES"
 	;;
-	
+
 	"f")
-		RANDOMFROM="YES"	
+		RANDOMFROM="YES"
 	;;
-	
+
 	"g")
-		RANDOMGROUP="YES"	
+		RANDOMGROUP="YES"
 	;;
-	
+
 	"c")
-		COMPRESSNZB="YES"	
+		COMPRESSNZB="YES"
 	;;
-	
+
 	"z")
-		SEVENZ="YES"	
+		SEVENZ="YES"
 	;;
-	
+
 	"F")
 		FULLRANDOM="YES"
 		RANDOMNAME="YES"
-		RANDOMPASS="YES"	
+		RANDOMPASS="YES"
 	;;
-	
+
 	"v")
          set -x
     ;;
-    
+
 	"?")
 		echo "Invalid option: -$OPTARG"
 		usage
@@ -115,23 +115,23 @@ done
 
 shift $((OPTIND-1))
 
-#-------------- Tests des dépendances ------------------ 
-LISTE_APPLIS="nyuu "${PAR2BIN}" cfv 7z rar bc openssl pwgen perl" 
-sortie="notok" 
-	for i in $LISTE_APPLIS; do 
-	which "$i" > /dev/null 2>&1 
-		if [ "$?" = "1" ]; 
-		then [ "$sortie" = "notok" ] && echo -e "${NORMAL}""Programme(s) manquant(s) : " 
-		echo -e "${VERTB}" "${i}""${NORMAL}" 
-		sortie="ok" 
-		fi; 
-	done 
-	if [ "$sortie" = "ok" ]; 
-	then 
-	echo -e "${VERTB}""Dependances ok""${NORMAL}" 
-	exit -1 
-	fi 
-#-------------- fin Tests des dépendances ------------------  
+#-------------- Tests des dépendances ------------------
+LISTE_APPLIS="nyuu "${PAR2BIN}" cfv 7z rar bc openssl pwgen perl"
+sortie="notok"
+	for i in $LISTE_APPLIS; do
+	which "$i" > /dev/null 2>&1
+		if [ "$?" = "1" ];
+		then [ "$sortie" = "notok" ] && echo -e "${NORMAL}""Programme(s) manquant(s) : "
+		echo -e "${VERTB}" "${i}""${NORMAL}"
+		sortie="ok"
+		fi;
+	done
+	if [ "$sortie" = "ok" ];
+	then
+	echo -e "${VERTB}""Dependances ok""${NORMAL}"
+	exit -1
+	fi
+#-------------- fin Tests des dépendances ------------------
 
 if [ -z "${SOURCE}" ] ; then
 	echo -e "$BLEUB"
@@ -142,15 +142,15 @@ fi
 
 #Création d\'un repertoire temporaire et du répertoire ou seront stocker les nzb
 if [ ! -d "$SCRIPT_PATH"/../temp ]
-then 
-	mkdir "$SCRIPT_PATH"/../temp 
+then
+	mkdir "$SCRIPT_PATH"/../temp
 fi
 TEMP="$SCRIPT_PATH/../temp"
 
 if [ -z "${NZBOUTPUT}" ]; then
 	if [ ! -d "$SCRIPT_PATH"/../nzb ]
-	then 
-	mkdir "$SCRIPT_PATH"/../nzb; 
+	then
+	mkdir "$SCRIPT_PATH"/../nzb;
 	fi
 	NZBOUTPUT="$SCRIPT_PATH/../nzb"
 fi
@@ -173,18 +173,18 @@ echo "$pass"
 function randsend() {
 part1=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
 part2=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
-sender=$"${part1}"@"${part2}".com 
-echo "${sender}"	
+sender=$"${part1}"@"${part2}".com
+echo "${sender}"
 }
 
 #Verification si la source est un fichier ou un répertoire
-function verifrep() {	
+function verifrep() {
 RELEASE=$(basename "${SOURCE}")
 if [ -d "${RELEASE}" ]; then
     DOSSIER="${RELEASE}"
 else
 	DOSSIER="${RELEASE%.*}"
-	mkdir "${DOSSIER}" 
+	mkdir "${DOSSIER}"
 	cp -rl "${RELEASE}" "${DOSSIER}"
 	DIRECTORY="NO"
 fi
@@ -204,8 +204,8 @@ fi
 function checknyuu()
 {
  if ! ( ps -u ${NYUUUSER} | grep Nyuu > /dev/null )
- then 
-	echo "UPLOAD POSSIBLE"	
+ then
+	echo "UPLOAD POSSIBLE"
  else
 	echo "UPLOAD EN COURS REESAI DANS 46 secondes"
 	sleep 46
@@ -219,25 +219,25 @@ function rarsize() {
 	SIZE=$(du -b -c "${DOSSIER}" | grep total | awk '{ print $1 }')
  	SIZEM=$(du -BM -c "${DOSSIER}" | grep total | awk -F "M" '{ print $1 }')
 	HUMANSIZE=$(du -h "${DOSSIER}" | awk '{ print $1 }')
-	
+
 	if [[ $SIZEM -gt 16384 ]]
- 	then 
+ 	then
 	MAXRARNUMBER="99"
 	elif [[ $SIZEM -lt 16384 ]] && [[ $SIZEM -gt 8192 ]]
-	then	
+	then
 	MAXRARNUMBER="99"
 	elif [[ $SIZEM -lt 8192 ]] && [[ $SIZEM -gt 4096 ]]
-	then	
+	then
 	MAXRARNUMBER="90"
 	elif [[ $SIZEM -lt 4096 ]] && [[ $SIZEM -gt 1024 ]]
-	then 
+	then
 	MAXRARNUMBER="39"
 	elif [[ $SIZEM -lt 1024 ]] && [[ $SIZEM -gt 512 ]]
-	then 
+	then
 	MAXRARNUMBER="39"
-	elif [[ $SIZEM -lt 512 ]]; 
-	then 
-	MAXRARNUMBER="19"	
+	elif [[ $SIZEM -lt 512 ]];
+	then
+	MAXRARNUMBER="19"
 	fi
 
 	ARTCLESIZE="64000"
@@ -262,7 +262,7 @@ function rarsize() {
 
 	BLOCKPERRARFILE=$(echo $((${TEMPRARSIZE} / ${ARTCLESIZE} + 1 |bc)))
 	RARSIZE=$((${BLOCKPERRARFILE} * ${ARTCLESIZE}))
-	
+
 # Calcul du PAR2BLOCKSIZE en fonction du ARTCLESIZE et de la taille du fichier/dossier SIZE
 
 	TEMPPAR2BLOCKSIZE=${ARTCLESIZE}
@@ -279,8 +279,8 @@ function rarsize() {
 
 #creation des archive et sfv
 function raring() {
-	echo -e "$JAUNE""CRÉATION DES ARCHIVE""$NORMAL" 	
-	 
+	echo -e "$JAUNE""CRÉATION DES ARCHIVE""$NORMAL"
+
 	if [[ ${SEVENZ} = "YES" ]]; then
 		if [[ ${RANDOMPASS} == "YES" ]]; then
 			RARPASS=$(randpass)
@@ -303,7 +303,7 @@ function raring() {
 			rar a -v"${RARSIZE}"b -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
 		fi
 	fi
-	
+
 	cd "${TEMP}"/"${NZBNAME}"
 	echo -e "$ROSE""CRÉATION DU SFV""$NORMAL"
 	cfv -C -f "${NZBNAME}".sfv
@@ -311,9 +311,9 @@ function raring() {
 }
 
 #creation des PAR2
-function createpar() { 
+function createpar() {
 	echo -e "$VERTB""CRÉATION DES PAR2""$NORMAL"
-	
+
 	if [[ "${PAR2BIN}" == "par2" ]]
 	then
 		par2create -s"${PAR2BLOCKSIZE}" -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
@@ -325,11 +325,11 @@ function createpar() {
 #Randomisation du groupe ou poster
 function randomgroup() {
 
-N=1	
+N=1
 for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
 do
     echo "${RANDOMGROUP[$index]}"
-done	
+done
 }
 
 #Upload sur les newsgroups
@@ -340,38 +340,38 @@ function uploadtong() {
 		randsend
 		NGFROM=${sender}
 	fi
-	
+
 	if [[ ${RANDOMGROUP} = YES ]]
 	then
 		#randomgroup
 		NGGROUP=$(randomgroup)
 	fi
-	
+
 	checknyuu
-	
+
 	if [[ ${COMPRESSNZB} = YES ]]; then
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb  -r include "${TEMP}"/"${NZBNAME}"/
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S --nzb-compress gzip --nzb-compress-level 9 -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/
 		fi
 	else
 		if [[ ${RANDOMPASS} == YES ]]; then
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/
 		else
-			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/ 
-		fi	
+			nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "${NGFROM}" -g "${NGGROUP}" -a "${ARTCLESIZE}" -S -o "${NZBOUTPUT}"/"${DOSSIER}".nzb -r include "${TEMP}"/"${NZBNAME}"/
+		fi
 	fi
 }
 
 #Randomisation du groupe ou poster
 function randomgroup() {
 
-N=1	
+N=1
 for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
 do
     echo "${RANDOMGROUP[$index]}"
-done	
+done
 }
 
 #upload en full random
@@ -383,8 +383,8 @@ echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
 
 cd "${TEMP}"/"${NZBNAME}"/
 declare -A archivename
-for archive in *; 
-do  
+for archive in *;
+do
 	archivecrypt=$(pwgen -cBsn 30)
 	mv "${archive}" "${archivecrypt}"
 	archivename[$archivecrypt]="${archive}"
@@ -392,9 +392,9 @@ done
 
 echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
 
-for fichiercrypt in *; 
-do 
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}"; 
+for fichiercrypt in *;
+do
+	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}";
 done
 
 echo -e "$CYAN""CREATION DU NZB""$NORMAL"
@@ -405,15 +405,15 @@ echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 	<head>
 		<meta type=\"password\">${RARPASS}</meta>
 	</head>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
-	
+
 cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
-do 
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 	
+do
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
 done
 
-echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb 
+echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
 
 }
 
@@ -436,7 +436,13 @@ function cleanup() {
 function log() {
 	local prefix="$(date +%Y/%m/%d\-%H:%M:%S)"
 	echo "${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" >> "$SCRIPT_PATH/../usenetLogancien.log"
-	sed -i "1i\\${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" "$SCRIPT_PATH/../usenetLog.log"			
+	if [ -e "$SCRIPT_PATH/../usenetLog.log" ]
+	then
+	    sed -i "1i\\${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" "$SCRIPT_PATH/../usenetLog.log"
+	else
+			touch "$SCRIPT_PATH/../usenetLog.log"
+	    sed -i "1i\\${prefix} ${SOURCE} ${HUMANSIZE} ${NZBNAME} ${RARPASS}" "$SCRIPT_PATH/../usenetLog.log"
+	fi
 }
 
 verifrep
@@ -469,7 +475,3 @@ fi
 
 
 echo "${SCRIPT_NAME}" FINIS
-	
-
-
-
