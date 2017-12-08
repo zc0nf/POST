@@ -410,7 +410,7 @@ cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
 do
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/$( basename "${DOSSIER}" ).nzb
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
 done
 
 echo "</nzb>" >> "${NZBOUTPUT}"/$( basename "${DOSSIER}" ).nzb
