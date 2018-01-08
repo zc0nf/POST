@@ -3,9 +3,9 @@
 BASEPATH=$(pwd)
 SCRIPT=${0}
 SCRIPT_NAME=${SCRIPT##*/}
-SCRIPT_PATH=$(dirname ${SCRIPT})
-source $SCRIPT_PATH/../conf/common.sh
-source $SCRIPT_PATH/../conf/conf.sh
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$SCRIPT_PATH"/../conf/common.sh
+source "$SCRIPT_PATH"/../conf/conf.sh
 
 usage()
 {
@@ -40,6 +40,6 @@ done
 
 shift $(($OPTIND-1))
 
-${BASEPATH}/tools/nzbverif.py -s ${NGHOST} -u ${NGUSER} -P ${NGPASS} -f ${FICHIER}
+"$SCRIPT_PATH"/../tools/nzbverif.py -s ${NGHOST} -u ${NGUSER} -P ${NGPASS} -f "${FICHIER}"
 
 
