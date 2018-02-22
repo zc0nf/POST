@@ -99,8 +99,12 @@
 * Ce script vous permet de vérifier la complétude d'un fichier NZB
 
 ## De quoi avez vous besoin ###
-
+## Pour Debian 8
 * `sudo apt-get install python-setproctitle python-pynzb`
+
+## Pour Debian 9
+* `sudo apt-get install python-setproctitle python-pip`
+* `sudo pip2 install pynzb`
 
 ## Utilisation
 

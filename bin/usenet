@@ -33,7 +33,7 @@
 BASEPATH=$(pwd)
 SCRIPT=${0}
 SCRIPT_NAME=${SCRIPT##*/}
-SCRIPT_PATH=$(dirname "${SCRIPT}")
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "$SCRIPT_PATH"/../conf/common.sh
 source "$SCRIPT_PATH"/../conf/conf.sh
@@ -147,13 +147,13 @@ then
 fi
 TEMP="$SCRIPT_PATH/../temp"
 
-if [ -z "${NZBOUTPUT}" ]; then
+#if [ -z "${NZBOUTPUT}" ]; then
 	if [ ! -d "$SCRIPT_PATH"/../nzb ]
 	then
 	mkdir "$SCRIPT_PATH"/../nzb;
 	fi
 	NZBOUTPUT="$SCRIPT_PATH/../nzb"
-fi
+#fi
 
 #Génération du nom aléatoire
 function randname() {
@@ -179,7 +179,7 @@ echo "${sender}"
 
 #Verification si la source est un fichier ou un répertoire
 function verifrep() {
-RELEASE=$(basename "${SOURCE}")
+RELEASE=${SOURCE}
 if [ -d "${RELEASE}" ]; then
     DOSSIER="${RELEASE}"
 else
@@ -294,13 +294,13 @@ function raring() {
 			RARPASS=$(randpass)
 			{
 				flock 204
-				rar a -v"${RARSIZE}"b -hp"${RARPASS}" -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}" \
+				rar a -v"${RARSIZE}"b -hp"${RARPASS}" -m0 -ep1 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar -ep1 "${DOSSIER}" \
 				|& perl $formatter RAR $SOURCE
 				rar_return=${PIPESTATUS[1]}
 				echo "" # Add a \n
 			} 204>"$SCRIPT_PATH"/../tools/rar.lock;
 		else
-			rar a -v"${RARSIZE}"b -m0 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
+			rar a -v"${RARSIZE}"b -m0 -ep1 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
 		fi
 	fi
 
@@ -404,20 +404,18 @@ echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <nzb xmlns=\"http://www.newzbin.com/DTD/2003/nzb\">
 	<head>
 		<meta type=\"password\">${RARPASS}</meta>
-	</head>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
+	</head>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
 
 cd "${TEMP}"/nzbtemp/
 
 for nzb in *.nzb;
 do
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
+	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
 done
 
-echo "</nzb>" >> "${NZBOUTPUT}"/"${DOSSIER}".nzb
+echo "</nzb>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
 
 }
-
-
 
 #nettoyage
 function cleanup() {
