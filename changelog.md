@@ -1,5 +1,11 @@
 # CHANGELOG#
 
+> 09/06/18 V2.01
+* Utilisation depuis n'importe quel sous repertoire
+
+> 09/06/18 V2.00
+* Adaptation pour les dernières version de nyuu et parpar
+
 > 24/08/17 V1.31
 
 * Ajout dans paramètre dans le fichier de conf afin de choisir le repertoire ou envoyer les NZB (Demande de Hm)
