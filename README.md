@@ -16,17 +16,19 @@
 ----------
 
 
-### De quoi avez vous besoin 
+### De quoi avez vous besoin     
 
-#### Méthode automatique
+#### Installation
 
-    
-
-#### Méthode manuel
-
-* `sudo apt-get install cfv git bc openssl pwgen perl`
-* `curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -`
-* `sudo apt-get install -y nodejs`
+* `sudo apt-get update`
+* `sudo apt-get upgrade`
+* `sudo apt-get install cfv git bc openssl pwgen perl curl build-essential`
+* `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
+* `nvm install 8.11.2`
+* `npm config set user 0`
+* `npm config set unsafe-perm true`
+* `npm install -g nyuu`
+* `npm install -g @animetosho/parpar`
 
 ##### Si vous souahitez utiliser 7zip 
 
@@ -39,11 +41,6 @@
 * `cd rarlinux-x64-5.5.0`
 * `sudo make`
 * `sudo make install`
-
-* `sudo npm install -g nyuu`
-* `sudo git clone https://github.com/animetosho/ParPar`
-* `cd ParPar`
-* `sudo npm install -g`
 
 ##### Si vous choisisez d'utiliser par2cmline
 
@@ -90,31 +87,6 @@
 ----------
 
 
-----------
-
-
-# README NZBVERIF#
-
-## Ce que va faire ce script
-* Ce script vous permet de vérifier la complétude d'un fichier NZB
-
-## De quoi avez vous besoin ###
-## Pour Debian 8
-* `sudo apt-get install python-setproctitle python-pynzb`
-
-## Pour Debian 9
-* `sudo apt-get install python-setproctitle python-pip`
-* `sudo pip2 install pynzb`
-
-## Utilisation
-
-> -f	Chosir le fichier nzb à vérifier (obligatoire)
-
-#### Exemple
-
-* `nzbverif -f nzb/debian-9.1.0-amd64-netinst.nzb`
-
-[![asciicast](https://asciinema.org/a/sR8lym4mmITzlosatkztPtUZG.png)](https://asciinema.org/a/sR8lym4mmITzlosatkztPtUZG)
 
 
 

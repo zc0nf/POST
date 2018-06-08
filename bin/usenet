@@ -316,7 +316,7 @@ function createpar() {
 
 	if [[ "${PAR2BIN}" == "par2" ]]
 	then
-		par2create -s"${PAR2BLOCKSIZE}" -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+		par2create -s"${PAR2BLOCKSIZE}"B -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	else
 		parpar -s "${PAR2BLOCKSIZE}" -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	fi
