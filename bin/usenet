@@ -1,10 +1,16 @@
 #!/bin/bash
 #############################################################################################
 #
-# Version Du Script : v1.31
+# Version Du Script : v2.01
 # Nom du Script : usenet
 #
 # -------------------------------------- HISTORIQUE ---------------------------------------
+#
+# > 09/06/18 V2.01
+# * Utilisation depuis n'importe quel sous repertoire
+#
+# > 09/06/18 V2.00
+# * Adaptation pour les dernieres version de nyuu et parpar
 #
 # > 24/08/17 V1.31
 # * Ajout dans paramètre dans le fichier de conf afin de choisir le repertoire ou envoyer les NZB (Demande de Hm)
@@ -23,10 +29,15 @@
 # * Version initial du script
 #-------------------------------------- INSTRUCTIONS --------------------------------------
 #
-# sudo apt-get install p7zip-full cfv mysql nodejs node-gyp node-async git
-# sudo npm install -g nyuu
-# sudo git clone https://github.com/animetosho/ParPar
-# sudo npm install -g
+# sudo apt-get update
+# sudo apt-get upgrade
+# sudo apt-get install cfv git bc openssl pwgen perl curl build-essential
+# curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+# nvm install 8.11.2
+# npm config set user 0
+# npm config set unsafe-perm true
+# npm install -g nyuu
+# npm install -g @animetosho/parpar
 #
 ##############################################################################################
 
@@ -316,9 +327,9 @@ function createpar() {
 
 	if [[ "${PAR2BIN}" == "par2" ]]
 	then
-		par2create -s"${PAR2BLOCKSIZE}"B -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+		par2create -s"${PAR2BLOCKSIZE}" -r"${PARPERCENT}" -m16000 -a"${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	else
-		parpar -s "${PAR2BLOCKSIZE}" -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
+		parpar -s "${PAR2BLOCKSIZE}"B -r"${PARPERCENT}"% -d pow2 -m 16000M -o "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".par2 -R "${TEMP}"/"${NZBNAME}"/
 	fi
 }
 
