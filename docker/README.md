@@ -21,7 +21,8 @@
           - ./data:/tmp/data
           
 ##### Dans le répertoire conf, vous créerez un fichier ng.server.sh avec les infos de votre serveur NNTP
- #!/bin/bash
+```bash
+#!/bin/bash
 
 NGHOST="reader.com"
 NGUSER="USERNAME"
@@ -39,6 +40,7 @@ PARPERCENT="10"
 MAXSEGNBR="8192" # Nombre de segments, maxi 32768
 MAXRARNUMBER="99" # Nombre de rar maxi 10, 50, 99 selon les preferences
 NYUUUSER="user"
+```
 
 ##### Dans le répertoire image, mettre le fichier DockerFile (il y aura à l'interieur toute les informations pour générer le container)
 
