@@ -65,7 +65,7 @@ OPTIONS:
 -z	Si vous préferez utiliser 7Z plutot que rar (bien plus performant)
 -c  Pour compresser le NZB obtenu
 -v  Pour activer le mode DEBUG
--F  Upload full random
+#-F  Upload full random
 
 EOF
 }
@@ -386,47 +386,47 @@ done
 }
 
 #upload en full random
-function uploadtongfullrandom() {
-mkdir "${TEMP}""${NZBTEMP}"
-echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL"
-
-echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
-
-cd "${TEMP}"/"${NZBNAME}"/
-declare -A archivename
-for archive in *;
-do
-	archivecrypt=$(pwgen -cBsn 30)
-	mv "${archive}" "${archivecrypt}"
-	archivename[$archivecrypt]="${archive}"
-done
-
-echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
-
-for fichiercrypt in *;
-do
-	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}";
-done
-
-echo -e "$CYAN""CREATION DU NZB""$NORMAL"
-
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<!DOCTYPE nzb PUBLIC \"-//newzBin//DTD NZB 1.1//EN\" \"http://www.newzbin.com/DTD/nzb/nzb-1.1.dtd\">
-<nzb xmlns=\"http://www.newzbin.com/DTD/2003/nzb\">
-	<head>
-		<meta type=\"password\">${RARPASS}</meta>
-	</head>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
-
-cd "${TEMP}"/nzbtemp/
-
-for nzb in *.nzb;
-do
-	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
-done
-
-echo "</nzb>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
-
-}
+# function uploadtongfullrandom() {
+# mkdir "${TEMP}""${NZBTEMP}"
+# echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL"
+# 
+# echo -e "$VERT""RANDOMISATION DES ARCHIVES""$NORMAL"
+# 
+# cd "${TEMP}"/"${NZBNAME}"/
+# declare -A archivename
+# for archive in *;
+# do
+# 	archivecrypt=$(pwgen -cBsn 30)
+# 	mv "${archive}" "${archivecrypt}"
+# 	archivename[$archivecrypt]="${archive}"
+# done
+# 
+# echo -e "$CYAN""UPLOAD SUR LES NEWSGROUPS""$NORMAL"
+# 
+# for fichiercrypt in *;
+# do
+# 	nyuu -h "${NGHOST}" -n "${NGNBRCONNECT}" -u "${NGUSER}" -p "${NGPASS}" -f "$(randsend)" -g "$(randomgroup)" -a "${ARTCLESIZE}" -S -M password="${RARPASS}" -o "${TEMP}""${NZBTEMP}""${fichiercrypt}".nzb "${fichiercrypt}";
+# done
+# 
+# echo -e "$CYAN""CREATION DU NZB""$NORMAL"
+# 
+# echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+# <!DOCTYPE nzb PUBLIC \"-//newzBin//DTD NZB 1.1//EN\" \"http://www.newzbin.com/DTD/nzb/nzb-1.1.dtd\">
+# <nzb xmlns=\"http://www.newzbin.com/DTD/2003/nzb\">
+# 	<head>
+# 		<meta type=\"password\">${RARPASS}</meta>
+# 	</head>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
+# 
+# cd "${TEMP}"/nzbtemp/
+# 
+# for nzb in *.nzb;
+# do
+# 	php "$SCRIPT_PATH"/../tools/nzb.php "${nzb}" "${archivename["${nzb%.*}"]}" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
+# done
+# 
+# echo "</nzb>" >> "${NZBOUTPUT}"/"$( basename "${DOSSIER}" )".nzb
+# 
+# }
 
 #nettoyage
 function cleanup() {
@@ -458,11 +458,11 @@ verifrep
 rarsize
 raring
 createpar
-if [[ ${FULLRANDOM} == YES ]]; then
-	uploadtongfullrandom
-else
+# if [[ ${FULLRANDOM} == YES ]]; then
+# 	uploadtongfullrandom
+# else
 	uploadtong
-fi
+# fi
    cleanup
 log
 
