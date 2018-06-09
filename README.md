@@ -69,7 +69,6 @@
 > * -f	Si vous désirez utiliser un nom de posteur aléatoire
 > * -z	Si vous préférez utiliser 7Z plutot que rar (7z étant bien plus performant)
 > * -c	A utiliser si vous souhaiter compresser le NZB obtenu
-> * -F	Upload full random
 > * -v	Pour activer le mode DEBUG
 
 
