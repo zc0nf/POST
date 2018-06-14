@@ -86,6 +86,9 @@
 
 [![asciicast](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA.png)](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA)
 
+[![asciicast](https://asciinema.org/a/eUyhPRgUgKwYhKqHZvsPLraFU.png)](https://asciinema.org/a/eUyhPRgUgKwYhKqHZvsPLraFU)
+
+
 
 ----------
 
