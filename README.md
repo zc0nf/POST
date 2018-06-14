@@ -75,7 +75,7 @@
 
 ##### Pour nzbverify
 > * Modifier le fichier .nzbverify
-> * nzbverify -n10 fichier.nzb (-n etant égale au nombre de connection à utiliser)
+> * nzbverif -n10 fichier.nzb (-n etant égale au nombre de connection à utiliser)
 ----------
 
 
