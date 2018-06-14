@@ -44,7 +44,7 @@ Usage:
 Options:
     -s<server>      : NNTP server
     -u<username>    : NNTP username
-    -p              : NNTP password, will be prompted for
+    -p<password>	: NNTP password, will be prompted for
     -P<port>        : NNTP port
     -c<config>      : Config file to use (defaults: ~/.nzbverify, ~/.netrc)
     -n<threads>     : Number of NNTP connections to use
