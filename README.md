@@ -62,7 +62,7 @@
 ----------
 
 
-### Utilisation
+### Utilisation 
 	
 
 > * -s	Chosir le fichier|dossier source (obligatoire)
@@ -73,9 +73,9 @@
 > * -c	A utiliser si vous souhaiter compresser le NZB obtenu
 > * -v	Pour activer le mode DEBUG
 
-##### Pour nzbverify
+#### Pour nzbverify
 > * Modifier le fichier .nzbverify
-> * nzbverif -n10 fichier.nzb (-n etant égale au nombre de connection à utiliser)
+
 ----------
 
 
@@ -85,6 +85,8 @@
 * `usenet -s debian-9.1.0-amd64-netinst.iso -f`
 
 [![asciicast](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA.png)](https://asciinema.org/a/HCihE7t77QTJOorNzDXLOXpQA)
+
+* `nzbverif -n10 debian-9.1.0-amd64-netinst.nzb (-n etant égale au nombre de connection à utiliser)`
 
 [![asciicast](https://asciinema.org/a/GAlKEtq2uGn3hP7i2szJ7nP2k.png)](https://asciinema.org/a/GAlKEtq2uGn3hP7i2szJ7nP2k)
 
