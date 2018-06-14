@@ -56,6 +56,8 @@
 * `git clone https://github.com/Diabolino/POST`
 * `cp -vaR POST/. . && rmdir POST/`
 
+##### Pour nzbverify
+* `sudo apt-get install python2.7`
 
 ----------
 
@@ -71,7 +73,9 @@
 > * -c	A utiliser si vous souhaiter compresser le NZB obtenu
 > * -v	Pour activer le mode DEBUG
 
-
+##### Pour nzbverify
+> * Modifier le fichier .nzbverify
+> * nzbverify -n10 fichier.nzb (-n etant égale au nombre de connection à utiliser)
 ----------
 
 
