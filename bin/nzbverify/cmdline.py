@@ -183,7 +183,7 @@ def run():
     }
     
     # Parse command line options
-    opts, args = getopt.getopt(sys.argv[1:], 's:u:P:n:c:eph', ["server=", "username=",  "port=", "connections=", "config=", "ssl", "password", "help"])
+    opts, args = getopt.getopt(sys.argv[1:], 's:u:P:n:c:p:eh', ["server=", "username=",  "port=", "connections=", "config=", "ssl", "password=", "help"])
     for o, a in opts:
         if o in ("-h", "--help"):
             print __help__
@@ -194,7 +194,7 @@ def run():
         elif o in ("-u", "--username"):
             nntp_kwargs['user'] = a
         elif o in ("-p", "--password"):
-            nntp_kwargs['password'] = getpass.getpass("Password: ")
+            nntp_kwargs['password'] = a
         elif o in ("-e", "--ssl"):
             nntp_kwargs['use_ssl'] = True
         elif o in ("-P", "--port"):
