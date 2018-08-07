@@ -1,4 +1,4 @@
-#!/bin/bash
+3#!/bin/bash -x
 #############################################################################################
 #
 # Version Du Script : v2.01
@@ -65,7 +65,7 @@ OPTIONS:
 -z	Si vous préferez utiliser 7Z plutot que rar (bien plus performant)
 -c  Pour compresser le NZB obtenu
 -v  Pour activer le mode DEBUG
-#-F  Upload full random
+-F  Upload full random
 
 EOF
 }
@@ -110,6 +110,8 @@ do
 		FULLRANDOM="YES"
 		RANDOMNAME="YES"
 		RANDOMPASS="YES"
+		RANDOMFROM="YES"
+		RANDOMGROUP="YES"
 	;;
 
 	"v")
@@ -311,7 +313,13 @@ function raring() {
 				echo "" # Add a \n
 			} 204>"$SCRIPT_PATH"/../tools/rar.lock;
 		else
-			rar a -v"${RARSIZE}"b -m0 -ep1 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar "${DOSSIER}"
+			{
+				flock 204
+				rar a -v"${RARSIZE}"b  -m0 -ep1 "${TEMP}"/"${NZBNAME}"/"${NZBNAME}".rar -ep1 "${DOSSIER}" \
+				|& perl $formatter RAR $SOURCE
+				rar_return=${PIPESTATUS[1]}
+				echo "" # Add a \n
+			} 204>"$SCRIPT_PATH"/../tools/rar.lock;
 		fi
 	fi
 
@@ -334,14 +342,17 @@ function createpar() {
 }
 
 #Randomisation du groupe ou poster
-function randomgroup() {
+# function randomgroup() {
+# 
+# N=1
+# for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
+# do
+#     echo "${RANDOMGROUP[$index]}"
+# done
+# }
 
-N=1
-for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
-do
-    echo "${RANDOMGROUP[$index]}"
-done
-}
+
+
 
 #Upload sur les newsgroups
 function uploadtong() {
@@ -378,11 +389,13 @@ function uploadtong() {
 #Randomisation du groupe ou poster
 function randomgroup() {
 
-N=1
-for index in $(shuf --input-range=0-$(( ${#RANDOMGROUP[*]} - 1 )) | head -${N})
-do
-    echo "${RANDOMGROUP[$index]}"
-done
+if [[ ${FULLRANDOM} == YES ]]; then
+	group=$(openssl rand -base64 32	| tr -cd '[:alpha:]' | head -c 8 | tr '[:upper:]' '[:lower:]')
+	echo "alt.binaries.${group}"
+else
+	randArrayElement(){ arr=("${!1}"); echo ${arr["$[RANDOM % ${#arr[@]}]"]}; }
+	randArrayElement "LISTGROUP[@]"
+fi
 }
 
 #upload en full random
@@ -428,6 +441,23 @@ done
 # 
 # }
 
+#upload en full random
+function uploadtongfullrandom() {
+	echo -e "$ROUGE""FULL RANDOM ACTIVATION""$NORMAL" 
+	cd "${TEMP}"/"${NZBNAME}"/
+	declare -A archivename
+	#for archive in *;
+	for archive in $(ls | grep -E "sfv|vol[0-9]{3}-[0-9]{3}|part[0-9]{3}.rar|part[0-9]{2}.rar")
+	do
+		archivecrypt=$(pwgen -cBsn 30)
+		mv "${archive}" "${archivecrypt}"
+		archivename[$archivecrypt]="${archive}"
+	done
+	cd "${BASEPATH}"/
+	uploadtong
+}
+	
+
 #nettoyage
 function cleanup() {
 	echo -e "$ROSEB""NETTOYAGE""$NORMAL"
@@ -458,12 +488,12 @@ verifrep
 rarsize
 raring
 createpar
-# if [[ ${FULLRANDOM} == YES ]]; then
-# 	uploadtongfullrandom
-# else
+if [[ ${FULLRANDOM} == YES ]]; then
+	uploadtongfullrandom
+else
 	uploadtong
-# fi
-   cleanup
+fi
+   	cleanup
 log
 
 

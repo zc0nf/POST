@@ -11,6 +11,7 @@ FROM debian:latest
       p7zip-full \
       bc \
       perl \
+      python2.7 \
       pwgen
 
     # Nettoyage de l'image
